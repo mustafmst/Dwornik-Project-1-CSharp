@@ -10,3 +10,9 @@ E:\Projects\Dwornik-Project-1-CSharp\Dwornik-Project-1\Dwornik-Project-1\obj\Deb
 E:\Projects\Dwornik-Project-1-CSharp\Dwornik-Project-1\Dwornik-Project-1\bin\Debug\Dwornik-Project-1.exe
 E:\Projects\Dwornik-Project-1-CSharp\Dwornik-Project-1\Dwornik-Project-1\bin\Debug\Dwornik-Project-1.pdb
 E:\Projects\Dwornik-Project-1-CSharp\Dwornik-Project-1\Dwornik-Project-1\obj\Debug\Dwornik-Project-1.csprojResolveAssemblyReference.cache
+D:\studia\Dwornik-Project-1-CSharp\Dwornik-Project-1\Dwornik-Project-1\bin\Debug\Dwornik-Project-1.exe.config
+D:\studia\Dwornik-Project-1-CSharp\Dwornik-Project-1\Dwornik-Project-1\obj\Debug\Dwornik-Project-1.exe
+D:\studia\Dwornik-Project-1-CSharp\Dwornik-Project-1\Dwornik-Project-1\obj\Debug\Dwornik-Project-1.pdb
+D:\studia\Dwornik-Project-1-CSharp\Dwornik-Project-1\Dwornik-Project-1\bin\Debug\Dwornik-Project-1.exe
+D:\studia\Dwornik-Project-1-CSharp\Dwornik-Project-1\Dwornik-Project-1\bin\Debug\Dwornik-Project-1.pdb
+D:\studia\Dwornik-Project-1-CSharp\Dwornik-Project-1\Dwornik-Project-1\obj\Debug\Dwornik-Project-1.csprojResolveAssemblyReference.cache

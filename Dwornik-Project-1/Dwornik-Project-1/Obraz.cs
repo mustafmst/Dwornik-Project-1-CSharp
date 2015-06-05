@@ -48,6 +48,15 @@ namespace Dwornik_Project_1
             licznikOperacji = 0;
         }
 
+        public Obraz(Bitmap nowy, string name)
+        {
+            mainImg = new Bitmap(nowy);
+            nazwaPliku = name;
+            lastTrans = mainImg;
+            ostatniaOperacja = "none";
+            licznikOperacji = 0;
+        }
+
 
         /**
          * Metoda wczytuje obraz oraz inicjuje podstawowe informacje.
@@ -98,7 +107,7 @@ namespace Dwornik_Project_1
          */
         public Bitmap monochrom()
         {
-            Bitmap monochrome = mainImg;
+            Bitmap monochrome = new Bitmap(mainImg);
 
             Color tmpPixel;
             Console.WriteLine("Przetwarzanie obrazu z koloru na skale szarosci");
@@ -117,10 +126,215 @@ namespace Dwornik_Project_1
             ostatniaOperacja = "Monochrom";
             return monochrome;
         }
-/*
+
         public Bitmap rotation(double angle)
         {
+            Console.WriteLine("Rotacja o kat: " + angle+" stopni");
+            Bitmap newImage = new Bitmap(mainImg);
+            int ny, nx, iFloorX, iFloorY, iCeilingX, iCeilingY;
+            double dDis, dAng, dTx, dTy, deltaX, deltaY;
+            Color newPixel, topL, topR, botL, botR, top, bot;
+            string angleC = angle.ToString();
+            angle = (angle + 90) * Math.PI / 180;
 
-        }*/
+            double percent = (mainImg.Height + mainImg.Width) / 10;
+            int percentCount = 0;
+
+            for (int ky = 0; ky < mainImg.Height; ky++)
+            {
+                for (int kx = 0; kx < mainImg.Width; kx++)
+                {
+                    if ((ky + kx) > percentCount * percent)
+                    {
+                        percentCount++;
+                        Console.Write(" | ");
+                    }
+                    newImage.SetPixel(kx, ky, Color.Black);
+
+                    // konwersja na uk³ad kartezjañski
+                    nx = kx - mainImg.Width / 2;
+                    ny = mainImg.Height / 2 - ky;
+
+                    // konwersja na uk³adk polarny
+                    dDis = Math.Sqrt(ny * ny + nx * nx);
+                    dAng = 0.0;
+
+
+                    if (nx == 0)
+                    {
+                        if (ny == 0)
+                        {
+                            newImage.SetPixel(kx, ky, mainImg.GetPixel(kx, ky));
+                            continue;
+                        }
+                        else
+                        {
+                            //dAng = 0.5*Math.PI;
+                            dAng = Math.Atan2((double)nx, (double)ny);
+                        }
+                    }
+                    else
+                    {
+                        dAng = Math.Atan2((double)nx, (double)ny);
+                    }
+
+
+                    dAng -= angle;
+
+                    dTx = dDis * Math.Cos(dAng);
+                    dTy = dDis * Math.Sin(dAng);
+
+                    dTx = dTx + (double)(mainImg.Width / 2);
+                    dTy = dTy + (double)(mainImg.Height / 2);
+
+                    // kordynanty punktów po których bêdziemy interpolowaæ kolor
+                    iFloorX = (int)(Math.Floor(dTx));
+                    iFloorY = (int)(Math.Floor(dTy));
+                    iCeilingX = (int)(Math.Ceiling(dTx));
+                    iCeilingY = (int)(Math.Ceiling(dTy));
+
+
+                    //sprawdzenie granic
+                    if (iFloorX < 0 || iCeilingX < 0 || iFloorX >= mainImg.Width || iCeilingX >= mainImg.Width || iFloorY < 0 || iCeilingY < 0 || iFloorY >= mainImg.Height || iCeilingY >= mainImg.Height)
+                    {
+                        continue;
+                    }
+
+                    // ró¿nica
+                    deltaX = dTx - (double)iFloorX;
+                    deltaY = dTy - (double)iFloorY;
+
+                    topL = mainImg.GetPixel(iFloorX, iFloorY);
+                    topR = mainImg.GetPixel(iCeilingX, iFloorY);
+                    botL = mainImg.GetPixel(iFloorX, iCeilingY);
+                    botR = mainImg.GetPixel(iCeilingX, iCeilingY);
+
+                    // interpolacja liniowa pomiêdzy górnymi pixelami
+                    top = Color.FromArgb(   (byte)((1 - deltaX) * topL.R + deltaX * topR.R),
+                                            (byte)((1 - deltaX) * topL.G + deltaX * topR.G),
+                                            (byte)((1 - deltaX) * topL.B + deltaX * topR.B));
+
+                    // interpolacja liniowa miêdzy dolnymi pixelami
+                    bot = Color.FromArgb(   (byte)((1 - deltaX) * botL.R + deltaX * botR.R),
+                                            (byte)((1 - deltaX) * botL.G + deltaX * botR.G),
+                                            (byte)((1 - deltaX) * botL.B + deltaX * botR.B));
+                    
+                    // interpolacja liniiowa miêdzy górnym a dolnym wynikiem
+                    newPixel = Color.FromArgb(  (byte)((1 - deltaY) * top.R + deltaY * bot.R),
+                                                (byte)((1 - deltaY) * top.G + deltaY * bot.G),
+                                                (byte)((1 - deltaY) * top.B + deltaY * bot.B));
+                    
+
+                    //ustawienie koloru nowego pixela
+                    newImage.SetPixel(kx, ky, newPixel);
+
+                }
+            }
+
+            Console.WriteLine("Koniec!!!");
+            lastTrans = newImage;
+            ostatniaOperacja = "Rotacja_bilinowa_o_" + angleC + "_stopni";
+            return newImage;
+
+        }
+
+        public Bitmap laplacian(double alpha)
+        {
+
+            Console.WriteLine("Filtracja laplasjan maska z parametrem alpha: " + alpha);
+            Bitmap newImage = new Bitmap(mainImg);
+            double[,] mask = new double[3,3];
+
+            mask[0,0] = mask[0,2] = mask[2,0] = mask[2,2] = (1 / (alpha + 1)) * alpha;
+            mask[0,1] = mask[1,0] = mask[1,2] = mask[2,1] = (1/(alpha+1))*(1-alpha);
+            mask[1,1] = (1/(alpha+1))*-4;
+
+            double R, G, B;
+            Color tmp;
+
+            double percent = (mainImg.Height + mainImg.Width) / 10;
+            int percentCount = 0;
+
+            for(int kz=1;kz<newImage.Height-1;kz++)
+            {
+                for(int kx=1;kx<newImage.Width-1;kx++)
+                {
+
+                    if ((kz + kx) > percentCount * percent)
+                    {
+                        percentCount++;
+                        Console.Write(" | ");
+                    }
+
+                    R = 0; G = 0; B = 0;
+                    for(int mz=0,z=kz-1;mz<3;mz++,z++)
+                    {
+                        for(int mx=0,x=kx-1;mx<3;mx++,x++)
+                        {
+                            tmp = mainImg.GetPixel(x,z);
+                            R += mask[mz,mx] * tmp.R;
+                            G += mask[mz,mx] * tmp.G;
+                            B += mask[mz,mx] * tmp.B;
+                        }
+                    }
+                    newImage.SetPixel( kx,kz, Color.FromArgb((byte)R,(byte)G,(byte)B));
+                }
+            }
+
+            Console.WriteLine("Koniec!!!");
+            lastTrans = newImage;
+            ostatniaOperacja = "Filtracja_laplacian_" + alpha + "_alpha";
+            return newImage;
+        }
+
+        public Bitmap unsharp(double alpha)
+        {
+
+            Console.WriteLine("Filtracja unsharp maska z parametrem alpha: " + alpha);
+
+            Bitmap newImage = new Bitmap(mainImg);
+            double[,] mask = new double[3, 3];
+
+            mask[0, 0] = mask[0, 2] = mask[2, 0] = mask[2, 2] = (1 / (alpha + 1)) * (-alpha);
+            mask[0, 1] = mask[1, 0] = mask[1, 2] = mask[2, 1] = (1 / (alpha + 1)) * (alpha-1);
+            mask[1, 1] = (1 / (alpha + 1)) * (alpha+5);
+
+            double R, G, B;
+            Color tmp;
+
+            double percent = (mainImg.Height + mainImg.Width) / 10;
+            int percentCount = 0;
+
+            for (int kz = 1; kz < newImage.Height - 1; kz++)
+            {
+                for (int kx = 1; kx < newImage.Width - 1; kx++)
+                {
+
+                    if ((kz + kx) > percentCount * percent)
+                    {
+                        percentCount++;
+                        Console.Write(" | ");
+                    }
+
+                    R = 0; G = 0; B = 0;
+                    for (int mz = 0, z = kz - 1; mz < 3; mz++, z++)
+                    {
+                        for (int mx = 0, x = kx - 1; mx < 3; mx++, x++)
+                        {
+                            tmp = mainImg.GetPixel(x, z);
+                            R += mask[mz, mx] * tmp.R;
+                            G += mask[mz, mx] * tmp.G;
+                            B += mask[mz, mx] * tmp.B;
+                        }
+                    }
+                    newImage.SetPixel(kx, kz, Color.FromArgb((byte)R, (byte)G, (byte)B));
+                }
+            }
+
+            Console.WriteLine("Koniec!!!");
+            lastTrans = newImage;
+            ostatniaOperacja = "Filtracja_unsharp_" + alpha + "_alpha";
+            return newImage;
+        }
     }
 }

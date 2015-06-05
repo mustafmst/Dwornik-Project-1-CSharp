@@ -37,6 +37,7 @@ namespace Dwornik_Project_1
         static void Main(string[] args)
         {
             Obraz img = new Obraz();
+            Obraz img2;
             /*
              * Sprawdzenie podania argumentów
              */
@@ -45,25 +46,32 @@ namespace Dwornik_Project_1
                 Console.WriteLine("Nie podano plikow wejsciowych w argumencie!!!!");
                 Console.WriteLine("\n==>>Porada:");
                 Console.WriteLine("==>>Prosze podawac pelna sciezke do pliku!!!");
-                
+
                 Console.ReadKey();
                 return;
             }
             else
             {
-                foreach(string file in args) 
+                foreach (string file in args)
                 {
                     /*
                      * Sprawdzenie poprawnosci wczytania pliku
                      */
                     if (img.wczytajObraz(file) == 0)
                     {
-                        img.monochrom();
+
+                        //img.rotation(30);
+                        img.laplacian(0.2);
+
                         img.zapiszObraz();
+
+                        img.unsharp(0);
+                        img.zapiszObraz();
+
                     }
                 }
             }
-            Console.ReadKey();
+            //Console.ReadKey();
         }
     }
 }
