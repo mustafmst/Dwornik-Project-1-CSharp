@@ -7,7 +7,7 @@
     <ProjectGuid>{946F3A48-CD9B-4590-B640-00DCD38B8AD6}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Dwornik_Project_1</RootNamespace>
+    <RootNamespace>TestApp</RootNamespace>
     <AssemblyName>Dwornik-Project-1</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

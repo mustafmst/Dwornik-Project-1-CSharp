@@ -32,16 +32,50 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
 
-namespace Dwornik_Project_1
+namespace ImageTool
 {
-    class Obraz
+    /// <summary>
+    /// Klasa do przechowywania i przetwarzania obrazu
+    /// </summary>
+    public class Obraz
     {
-        
+        #region zmienne
+
         private Bitmap mainImg;
         private Bitmap lastTrans;
         private string nazwaPliku;
         private int licznikOperacji;
         private string ostatniaOperacja;
+
+        #endregion
+        //======================================================================================
+        #region wlasciwosci
+
+        /// <summary>
+        /// pobieranie glownego obrazu
+        /// </summary>
+        public Bitmap Main
+        {
+            public get
+            {
+                return mainImg;
+            }
+        }
+
+        /// <summary>
+        /// pobieranie obrazu po transformacji
+        /// </summary>
+        public Bitmap Trans
+        {
+            public get
+            {
+                return lastTrans;
+            }
+        }
+
+        #endregion
+        //======================================================================================
+        #region metody
 
         public Obraz()
         {
@@ -58,10 +92,15 @@ namespace Dwornik_Project_1
         }
 
 
-        /**
-         * Metoda wczytuje obraz oraz inicjuje podstawowe informacje.
-         * Przy niepowodzeniu zwraca wartosc 1 a w innych wypadkach 0.
-         */
+        /// <summary>
+        /// Metoda wczytuje obraz oraz inicjuje podstawowe informacje.
+        /// Przy niepowodzeniu zwraca wartosc 1 a w innych wypadkach 0.
+        /// </summary>
+        /// <param name="file">nazwa pliku</param>
+        /// <returns>
+        /// 0 - wczytano plik
+        /// 1 - blad odczytu
+        /// </returns>
         public int wczytajObraz(string file)
         {
             try
@@ -70,6 +109,7 @@ namespace Dwornik_Project_1
                 nazwaPliku = file;
                 lastTrans = mainImg;
                 ostatniaOperacja = "none";
+                licznikOperacji = 0;
             }
             catch (Exception)
             {
@@ -81,11 +121,15 @@ namespace Dwornik_Project_1
             return 0;
         }
 
-        /**
-         * Metoda zapisuje obraz do pliku, ktorego nazwa jest generowana 
-         * na podstawie dotychczasowych operacji.
-         * Przy niepowodzeniu zwraca wartosc 1 a w innych wypadkach 0.
-         */
+        /// <summary> 
+        /// Metoda zapisuje obraz do pliku, ktorego nazwa jest generowana 
+        /// na podstawie dotychczasowych operacji.
+        /// Przy niepowodzeniu zwraca wartosc 1 a w innych wypadkach 0.
+        /// </summary>
+        /// <returns>
+        /// 0 - zapisano plik
+        /// 1 - blad zapisu
+        /// </returns>
         public int zapiszObraz()
         {
             try
@@ -101,10 +145,10 @@ namespace Dwornik_Project_1
             return 0;
         }
 
-        /**
-         * Przekształcenie z obrazu RGB na odczienie szarości.
-         * Zwracany jest obraz wynikowy jako obiekt typu System.Drwaing.Bitmap
-         */
+        /// <summary>
+        /// Przekształcenie z obrazu RGB na odczienie szarości.
+        /// </summary>
+        /// <returns>obraz wynikowy</returns>
         public Bitmap monochrom()
         {
             Bitmap monochrome = new Bitmap(mainImg);
@@ -127,6 +171,12 @@ namespace Dwornik_Project_1
             return monochrome;
         }
 
+
+        /// <summary>
+        /// Obraca obraz korzystajac z interpolacji biliniowej
+        /// </summary>
+        /// <param name="angle">kat obrotu w stopniach</param>
+        /// <returns>obraz wynikowy</returns>
         public Bitmap rotation(double angle)
         {
             Console.WriteLine("Rotacja o kat: " + angle+" stopni");
@@ -151,11 +201,11 @@ namespace Dwornik_Project_1
                     }
                     newImage.SetPixel(kx, ky, Color.Black);
 
-                    // konwersja na uk³ad kartezjañski
+                    
                     nx = kx - mainImg.Width / 2;
                     ny = mainImg.Height / 2 - ky;
 
-                    // konwersja na uk³adk polarny
+
                     dDis = Math.Sqrt(ny * ny + nx * nx);
                     dAng = 0.0;
 
@@ -169,7 +219,6 @@ namespace Dwornik_Project_1
                         }
                         else
                         {
-                            //dAng = 0.5*Math.PI;
                             dAng = Math.Atan2((double)nx, (double)ny);
                         }
                     }
@@ -187,20 +236,16 @@ namespace Dwornik_Project_1
                     dTx = dTx + (double)(mainImg.Width / 2);
                     dTy = dTy + (double)(mainImg.Height / 2);
 
-                    // kordynanty punktów po których bêdziemy interpolowaæ kolor
                     iFloorX = (int)(Math.Floor(dTx));
                     iFloorY = (int)(Math.Floor(dTy));
                     iCeilingX = (int)(Math.Ceiling(dTx));
                     iCeilingY = (int)(Math.Ceiling(dTy));
 
-
-                    //sprawdzenie granic
                     if (iFloorX < 0 || iCeilingX < 0 || iFloorX >= mainImg.Width || iCeilingX >= mainImg.Width || iFloorY < 0 || iCeilingY < 0 || iFloorY >= mainImg.Height || iCeilingY >= mainImg.Height)
                     {
                         continue;
                     }
 
-                    // ró¿nica
                     deltaX = dTx - (double)iFloorX;
                     deltaY = dTy - (double)iFloorY;
 
@@ -238,6 +283,11 @@ namespace Dwornik_Project_1
 
         }
 
+        /// <summary>
+        /// filtruje obraz maska laplasjan
+        /// </summary>
+        /// <param name="alpha">parametr tworzenia maski</param>
+        /// <returns>obraz wynikowy</returns>
         public Bitmap laplacian(double alpha)
         {
 
@@ -287,6 +337,11 @@ namespace Dwornik_Project_1
             return newImage;
         }
 
+        /// <summary>
+        /// filtruje obraz maska laplasjan
+        /// </summary>
+        /// <param name="alpha">parametr tworzenia maski</param>
+        /// <returns>obraz wynikowy</returns>
         public Bitmap unsharp(double alpha)
         {
 
@@ -336,5 +391,7 @@ namespace Dwornik_Project_1
             ostatniaOperacja = "Filtracja_unsharp_" + alpha + "_alpha";
             return newImage;
         }
+
+        #endregion
     }
 }

@@ -29,15 +29,16 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
+using ImageTool;
 
-namespace Dwornik_Project_1
+namespace TestApp
 {
     class Program
     {
         static void Main(string[] args)
         {
             Obraz img = new Obraz();
-            Obraz img2;
+
             /*
              * Sprawdzenie podania argumentów
              */
@@ -67,6 +68,7 @@ namespace Dwornik_Project_1
 
                         img.unsharp(0);
                         img.zapiszObraz();
+
 
                     }
                 }
